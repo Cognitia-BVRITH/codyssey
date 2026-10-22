@@ -2,6 +2,37 @@
 
 > **An autonomous journey from bug report to verified fix.**
 
+## Getting started
+
+The repository currently provides a starter Python package, task validation CLI,
+shared data contracts, and a deliberately buggy test fixture. The repair engine,
+Docker sandbox, API, and dashboard described below are proposed components.
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -e '.[dev]'
+codyssey --help
+codyssey version
+python -m pytest
+```
+
+Use `codyssey validate-task path/to/task.json` to validate prepared task input.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for setup and contribution conventions.
+
+| Document | Contents |
+| --- | --- |
+| [Tech stack](TECH_STACK.md) | Proposed technologies and module layout |
+| [Proposed plan](PROPOSED_PLAN.md) | Eight-week milestones and acceptance criteria |
+| [Team division](TEAM_DIVISION.md) | Three-member ownership and handoffs |
+| [Architecture](docs/ARCHITECTURE.md) | Current implementation and planned boundaries |
+| [Configuration](docs/CONFIGURATION.md) | Task fields and planned runtime settings |
+| [Testing](docs/TESTING.md) | Controller checks and the intentionally failing fixture |
+| [Evaluation](docs/EVALUATION.md) | Benchmark comparison and reporting protocol |
+| [Detailed design](DESIGN.md) | Original system design |
+
+## Project overview
+
 Codyssey is a repository-level **automated program repair agent** designed to take a real software bug, locate its probable source, generate candidate fixes, execute tests in an isolated environment, learn from failures, and iteratively search for a verified repair.
 
 Rather than treating an LLM as the entire solution, Codyssey explores a **cost-aware hybrid approach** that combines traditional program analysis, repository intelligence, automated testing, and selective LLM reasoning.
