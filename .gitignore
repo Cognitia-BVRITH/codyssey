@@ -1,0 +1,37 @@
+# Python environments and generated packages
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# Credentials and local configuration
+.env
+.env.*
+!.env.example
+config.yaml
+.aws/
+
+# Generated repair data and local databases
+data/
+*.db
+*.db-shm
+*.db-wal
+*.log
+
+# Frontend dependencies and generated output
+node_modules/
+web/dist/
+
+# Editor and OS files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
