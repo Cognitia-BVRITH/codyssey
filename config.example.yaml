@@ -1,0 +1,37 @@
+# Proposed runtime configuration; not yet loaded by the starter CLI.
+storage:
+  database_url: sqlite:///data/codyssey.db
+  artifact_root: data/runs
+
+llm:
+  provider: openai_compatible
+  # Set these to a provider's supported endpoint and model before integration.
+  base_url: null
+  model: null
+  api_key_env: CODYSSEY_LLM_API_KEY
+  temperature: 0.0
+  max_output_tokens: 2000
+  max_retries: 3
+
+repair:
+  strategy: hybrid
+  max_attempts: 5
+  max_deterministic_candidates: 3
+  max_total_tokens: 300000
+  max_llm_calls: 10
+  max_context_tokens: 20000
+  timeout_seconds: 1200
+  # Optional cost ceiling; requires configured pricing and usage accounting.
+  max_estimated_cost_usd: null
+
+sandbox:
+  # Requires a prepared image compatible with the target repository.
+  image: null
+  network_enabled: false
+  run_as_non_root: true
+  cpu_limit: 2
+  memory_limit: 2g
+  process_limit: 128
+  test_timeout_seconds: 120
+  max_output_bytes: 1048576
+  recreate_between_attempts: true
