@@ -56,6 +56,37 @@ class PatchCandidate(Contract):
 
     diff: str = Field(min_length=1)
     method: Literal["deterministic", "llm"]
+    touched_paths: list[str] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def validate_touched_paths(self) -> "PatchCandidate":
+        if any(not path.strip() for path in self.touched_paths):
+            raise ValueError("touched_paths cannot contain blank entries")
+        if len(self.touched_paths) != len(set(self.touched_paths)):
+            raise ValueError("touched_paths cannot contain duplicates")
+        return self
+
+
+class RepairUsage(Contract):
+    """Provider usage totals across every request made to produce one outcome."""
+
+    input_tokens: int = Field(default=0, ge=0)
+    output_tokens: int = Field(default=0, ge=0)
+    latency_ms: int = Field(default=0, ge=0)
+
+
+class RepairOutcome(Contract):
+    """Result of one repair request: a candidate, or an explicit reason for none."""
+
+    candidate: PatchCandidate | None = None
+    rejection_reason: str | None = Field(default=None, min_length=1)
+    usage: RepairUsage = Field(default_factory=RepairUsage)
+
+    @model_validator(mode="after")
+    def validate_candidate_or_reason(self) -> "RepairOutcome":
+        if (self.candidate is None) == (self.rejection_reason is None):
+            raise ValueError("Provide exactly one of candidate or rejection_reason")
+        return self
 
 
 class TestResult(Contract):
