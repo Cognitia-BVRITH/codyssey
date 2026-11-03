@@ -45,6 +45,12 @@ arrays for test commands. It requires an exact 40-character Git commit, a prepar
 environment image, and nonempty, disjoint failing and regression test groups.
 These are initial contracts, not a complete security or verification layer.
 
+Repair components return a `RepairOutcome`: either a `PatchCandidate` (diff,
+generation method, and the file paths it touches) or a `rejection_reason`,
+never both. `usage` records provider tokens and latency even when no candidate
+results, so the orchestrator can charge rejected attempts against the budget.
+Deterministic candidates report zero usage.
+
 Use `queued`, `running`, `verified`, `failed`, `error`, and `cancelled` consistently.
 The older design document omits `cancelled`; this scaffold includes it to match
 the planned cancellation API. Progress-event and persisted run-configuration
