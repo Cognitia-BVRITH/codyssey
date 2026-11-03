@@ -7,8 +7,15 @@ The starter package provides shared Pydantic contracts, a `version` command, and
 constraints and CLI error handling. An intentionally buggy pytest fixture supplies
 the first reproduction target.
 
-Repository ingestion, repair generation, Docker execution, persistence, the API,
-and the dashboard are planned and are not implemented.
+`localization/index.py` provides `build_index(repo_path)`, which parses every
+`.py` file with Python's `ast` module and records each class, function, and method
+with its file, line range, signature, and docstring. `SymbolIndex.search_symbol`
+looks symbols up by short or qualified name. Unparseable files are listed in
+`index.errors` instead of stopping the scan. Nested functions, call relationships,
+and per-commit caching are not implemented yet.
+
+Repository ingestion, localization ranking, repair generation, Docker execution,
+persistence, the API, and the dashboard are planned and are not implemented.
 
 ## Planned flow
 
