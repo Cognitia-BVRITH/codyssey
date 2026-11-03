@@ -45,7 +45,7 @@ def test_prepared_task_round_trips(task_data):
 
 def test_patch_preserves_diff_whitespace():
     diff = "--- a/file.py\n+++ b/file.py\n@@ -1 +1 @@\n-old\n+new\n"
-    assert PatchCandidate(diff=diff, method="llm").diff == diff
+    assert PatchCandidate(diff=diff, method="llm", touched_paths=["a.py"]).diff == diff
 
 
 def test_provider_response_preserves_code_whitespace():
