@@ -2,7 +2,7 @@
 
 ## Purpose and scope
 
-This document turns the technology options in [README.md](README.md) and [DESIGN.md](DESIGN.md) into a proposed implementation baseline. The repository currently contains planning documents only; the choices below describe work to be built.
+This document turns the technology options in [README.md](README.md) and [DESIGN.md](DESIGN.md) into a proposed implementation baseline. The repository includes a starter CLI, shared contracts, a symbol index, and initial supplied-patch validation. See [validation status](docs/VALIDATION.md). Remaining choices describe work to be built.
 
 Version 1 targets Python repositories with pytest tests. Its main interface is a CLI, followed by a REST API and a small dashboard. It produces a patch and supporting test evidence for human review.
 
@@ -18,7 +18,7 @@ Version 1 targets Python repositories with pytest tests. Its main interface is a
 | Repository analysis | Python `ast`, `pathlib`, and text search | Builds a commit-keyed symbol index and retrieves functions, classes, and nearby code. Call relationships are best-effort static hints. |
 | Fault localization | Traceback parsing, keyword ranking, coverage.py | Combines inexpensive signals before optional LLM ranking. Add Ochiai scoring only when per-test coverage is available. |
 | Traditional repair | AST-guided operator candidates | Starts with comparison-boundary and boolean-condition mutations at suspicious locations. Each candidate goes through the same validator. |
-| Sandbox | Docker Engine and Docker SDK for Python | Runs target repositories in disposable containers with explicit resource limits and timeouts. |
+| Sandbox | Docker Engine through the Docker CLI | Initial executor uses subprocess argument arrays and disposable containers with resource limits and timeouts; the Python SDK is deferred. |
 | Test execution | pytest and its JUnit XML output | Supplies structured test identities, outcomes, and durations instead of relying only on console text. |
 | Persistence | SQLite and SQLAlchemy | Stores tasks, runs, attempts, test outcomes, and LLM-call metadata on one development machine. |
 | Large artifacts | Local filesystem | Stores immutable prompts, responses, patches, and test logs; SQLite stores their paths. |

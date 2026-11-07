@@ -14,8 +14,13 @@ looks symbols up by short or qualified name. Unparseable files are listed in
 `index.errors` instead of stopping the scan. Nested functions, call relationships,
 and per-commit caching are not implemented yet.
 
-Repository ingestion, localization ranking, repair generation, Docker execution,
-persistence, the API, and the dashboard are planned and are not implemented.
+`repository/checkout.py` creates exact-commit detached checkouts. `sandbox/`
+provides supplied-patch checks, JUnit evidence validation, and a Docker CLI
+executor. See [validation](VALIDATION.md) for the API, restrictions, verification
+status, and remaining work. Container execution is unverified locally.
+
+Localization ranking, repair generation, persistence, the API, and the dashboard
+are planned and are not implemented.
 
 ## Planned flow
 

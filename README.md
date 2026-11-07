@@ -5,8 +5,10 @@
 ## Getting started
 
 The repository currently provides a starter Python package, task validation CLI,
-shared data contracts, and a deliberately buggy test fixture. The repair engine,
-Docker sandbox, API, and dashboard described below are proposed components.
+shared data contracts, a Python symbol index, and a supplied-patch validation API.
+See [Person 1 validation](docs/VALIDATION.md) for checkout, evidence checks, and the
+Docker executor's restrictions and verification status. The repair engine, API,
+and dashboard described below are proposed components.
 
 ```bash
 python3 -m venv .venv

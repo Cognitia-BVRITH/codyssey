@@ -27,6 +27,12 @@ The README describes hybrid repair, while the design document emphasizes an LLM 
 
 ## Milestone details
 
+Current Member 1 progress: exact-commit checkout, supplied-patch checks, evidence
+validation, and an initial Docker CLI executor are implemented. Trusted-fixture
+integration tests pass; Docker execution is not verified locally. Cancellation,
+evaluator test preparation, and full week-2 acceptance remain outstanding.
+See [validation status](docs/VALIDATION.md).
+
 ### Foundation and verification
 
 Agree on `Task`, `Run`, `Attempt`, `PatchCandidate`, `TestReport`, `LLMResponse`, and progress-event contracts before parallel implementation. A task includes repository URL/path, exact base commit, issue text, environment specification, test commands, and expected failing and regression test identities.

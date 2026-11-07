@@ -11,8 +11,11 @@ python -m ruff format --check .
 ```
 
 Default pytest collection includes `tests/unit/` and `tests/integration/`.
-The initial unit suite checks task constraints and basic CLI behavior. No sandbox
-integration tests exist yet. CI runs controller checks on Python 3.11 and 3.12.
+Unit tests check task constraints, CLI behavior, indexing, and test evidence.
+Integration tests exercise exact-commit checkout, supplied patches, and fresh
+attempt state using only the trusted local fixture. The opt-in Docker test and
+remaining checks are described in [validation](VALIDATION.md).
+CI runs controller checks on Python 3.11 and 3.12.
 
 ## Deliberately failing target
 

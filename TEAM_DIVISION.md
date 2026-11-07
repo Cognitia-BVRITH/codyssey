@@ -46,6 +46,10 @@ Paths describe planned modules, not existing code. Keep tests with the owner of 
 
 ## Handoff contracts
 
+Initial Member 1 handoff: `Validator.validate(task, artifacts, candidate=None)`
+returns reproduction/validation status, test evidence, and a reason on failure.
+See [validation](docs/VALIDATION.md) for usage and remaining lifecycle work.
+
 ### Member 1 → Members 2 and 3
 
 Provide a sandbox/validator interface that prepares the base state, reproduces the baseline, validates a candidate, and cleans up. Return structured outcomes for patch rejection, test failure, timeout, and infrastructure error, along with test identities and artifact paths.
