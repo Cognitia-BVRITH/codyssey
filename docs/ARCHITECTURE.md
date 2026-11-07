@@ -14,6 +14,14 @@ looks symbols up by short or qualified name. Unparseable files are listed in
 `index.errors` instead of stopping the scan. Nested functions, call relationships,
 and per-commit caching are not implemented yet.
 
+`budget.py` provides `BudgetGuard`, which the orchestrator uses to stop a run on the
+first exhausted limit: wall-clock time, attempts, total tokens, provider requests, or
+estimated cost. Usage from every repair outcome is charged, including outcomes with no
+candidate. `remaining()` returns the allowances components should respect for their
+next action. Token, request, and cost limits depend on provider-reported usage, so they
+are best-effort: one request can overshoot before its usage is recorded. Estimated cost
+uses the configured price assumptions and is undefined when none are set.
+
 Repository ingestion, localization ranking, repair generation, Docker execution,
 persistence, the API, and the dashboard are planned and are not implemented.
 
