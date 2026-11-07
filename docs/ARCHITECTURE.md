@@ -2,8 +2,10 @@
 
 ## Available now
 
-The starter package provides shared Pydantic contracts, a `version` command, and
-`validate-task PATH` for prepared JSON input. Unit tests cover initial input
+The starter package provides shared Pydantic contracts, a `version` command,
+`validate-task PATH` for prepared JSON input, `validate-config PATH` for runtime
+settings, and `runs list` / `runs show RUN_ID` for inspecting recorded runs (both
+accept `--config` to locate the database; neither creates one). Unit tests cover initial input
 constraints and CLI error handling. An intentionally buggy pytest fixture supplies
 the first reproduction target.
 
