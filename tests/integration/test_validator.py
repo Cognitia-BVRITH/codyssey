@@ -73,7 +73,8 @@ def candidate():
 
 
 def exercise(validator, task, tmp_path):
-    assert validator.validate(task, tmp_path / "baseline").status == "reproduced"
+    baseline = validator.validate(task, tmp_path / "baseline")
+    assert baseline.status == "reproduced", baseline.reason
     outcome = validator.validate(task, tmp_path / "valid", candidate())
     assert outcome.status == "verified", outcome.reason
     # A fresh invocation must reproduce the original bug, even after a passing candidate.

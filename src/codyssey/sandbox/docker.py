@@ -100,7 +100,21 @@ class DockerExecutor:
                 timed_out, exit_code = True, -1
                 subprocess.run(["docker", "kill", name], capture_output=True, timeout=30)
             evidence = artifacts / "junit.xml"
-            return read_junit(evidence, task, exit_code, timed_out)
+            log_path = artifacts / "container.log"
+            with log_path.open("wb") as log:
+                subprocess.run(
+                    ["docker", "logs", "--tail", "100", name],
+                    stdout=log,
+                    stderr=subprocess.STDOUT,
+                    timeout=30,
+                    check=False,
+                )
+            report = read_junit(evidence, task, exit_code, timed_out)
+            report.output_path = str(log_path)
+            if report.collection_errors:
+                detail = log_path.read_bytes()[-4000:].decode("utf-8", errors="replace")
+                report.collection_errors.append(f"Container output: {detail}")
+            return report
         finally:
             subprocess.run(
                 ["docker", "rm", "--force", name], capture_output=True, timeout=30, check=True
