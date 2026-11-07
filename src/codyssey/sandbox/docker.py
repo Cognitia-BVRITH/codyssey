@@ -84,6 +84,8 @@ class DockerExecutor:
             "max-size=1m",
             "--log-opt",
             "max-file=1",
+            "--log-opt",
+            "compress=false",
         ]
         timed_out = False
         try:

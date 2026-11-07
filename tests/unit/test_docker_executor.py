@@ -30,6 +30,8 @@ def test_container_limits_and_cleanup(monkeypatch, tmp_path, times_out):
     assert "--read-only" in command
     assert "--pull=never" in command
     assert "--pids-limit" in command
+    assert "max-file=1" in command
+    assert "compress=false" in command
     assert calls[-1][:3] == ["docker", "rm", "--force"]
     assert report.timed_out == times_out
     assert report.collection_errors  # A successful process without evidence cannot verify.

@@ -48,7 +48,9 @@ no capabilities, no-new-privileges, 2 CPUs, 2 GiB RAM, 128 processes, and a 512 
 temporary workspace. Images are never pulled at execution time. Only the new
 evidence directory is writable from the host; its permissions are opened to the
 container user. Keep secrets and existing artifacts out of that directory.
-Docker logs rotate at 1 MiB; raw console logs are not yet exported.
+Docker logs are capped at one 1 MiB file with compression disabled (Docker rejects
+compression with a single retained file). The last 100 lines are exported as
+`container.log`; missing JUnit evidence includes a short log tail in its reason.
 
 Timed-out containers are killed and containers are force-removed in `finally`.
 Startup/cleanup failures produce infrastructure errors. The test timeout excludes
