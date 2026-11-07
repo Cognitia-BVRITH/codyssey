@@ -14,8 +14,8 @@ codyssey version
 ```
 
 On Windows PowerShell, activate with `.venv\Scripts\Activate.ps1` instead.
-Example configuration files describe planned runtime settings. The starter CLI
-does not load them or make provider requests. See [configuration](docs/CONFIGURATION.md).
+Validate a configuration file with `codyssey validate-config config.yaml`. The CLI
+makes no provider requests. See [configuration](docs/CONFIGURATION.md).
 
 ## Working agreement
 

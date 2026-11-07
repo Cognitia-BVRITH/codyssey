@@ -1,4 +1,4 @@
-# Proposed runtime configuration; not yet loaded by the starter CLI.
+# Runtime configuration. Validate with `codyssey validate-config config.yaml`.
 storage:
   database_url: sqlite:///data/codyssey.db
   artifact_root: data/runs
@@ -12,6 +12,9 @@ llm:
   temperature: 0.0
   max_output_tokens: 2000
   max_retries: 3
+  # Price assumptions (USD per million tokens); required for max_estimated_cost_usd.
+  input_usd_per_million_tokens: null
+  output_usd_per_million_tokens: null
 
 repair:
   strategy: hybrid
