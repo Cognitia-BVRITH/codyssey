@@ -1,5 +1,11 @@
 Codyssey — Design Document 
 
+> This is the original proposal. Current contracts use snake_case fields, exact
+> commits, and argument arrays; examples below are historical. For implemented
+> behavior use docs/ARCHITECTURE.md and docs/VALIDATION.md. The initial validator
+> creates a fresh checkout/container per invocation, replacing the proposed
+> `git checkout .` reset. Cancellation and total-run deadlines remain pending.
+
 # 1. Introduction and overview 
 
 Codyssey is a Python tool that takes a GitHub issue and a repository, then tries to produce a bug fix that is verified by the project's own tests. It does this by finding the buggy code, asking an LLM to write a patch, running the tests in an isolated Docker sandbox, and retrying with the error output until it succeeds or hits a hard limit. 
