@@ -11,7 +11,9 @@ python -m ruff format --check .
 ```
 
 Default pytest collection includes `tests/unit/` and `tests/integration/`.
-The initial unit suite checks task constraints and basic CLI behavior. No sandbox
+The unit suite checks task constraints, configuration, budgets, SQLite storage,
+artifact safety, the run controller (using the scripted fakes in
+`codyssey/fakes.py`), and basic CLI behavior. No sandbox
 integration tests exist yet. CI runs controller checks on Python 3.11 and 3.12.
 
 ## Deliberately failing target

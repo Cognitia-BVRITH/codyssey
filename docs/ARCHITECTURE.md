@@ -43,6 +43,35 @@ so exported records stay portable. Run IDs from `new_run_id()` are sortable and 
 across machines. The data model deliberately omits the design document's `LLMCall` and
 `RepoIndex` tables until the provider and index code needing them exists.
 
+`orchestrator.py` provides `Orchestrator.run(run_id)`, which takes a queued run to a
+terminal status. It reproduces the baseline, then loops: check budgets and cancellation,
+ask the repair component for a candidate, store the patch, validate it, persist the
+attempt and test results, and feed a short failure summary into the next request. It
+depends only on two interfaces: `PatchValidator` (the shape of
+`sandbox.validator.Validator.validate`) and `Repairer.propose(RepairRequest)`, which
+returns a `RepairOutcome` and receives the remaining allowances. Outcomes map as follows:
+
+| Situation | Run status | Attempt status |
+| --- | --- | --- |
+| Validator returns `verified` | `verified` (writes `final_patch.diff`) | `tests_passed` |
+| Tests fail, patch will not apply, or tests time out | continues | `tests_failed`, `patch_invalid`, `timeout` |
+| Repairer returns no candidate, or repeats an earlier diff | continues | `patch_invalid` |
+| Any budget is exhausted | `failed` with the limit as reason | none |
+| Baseline does not reproduce, validator reports `error`, or the controller raises | `error` | `error` when an attempt was running |
+| Cancellation observed | `cancelled` | none |
+
+Every `propose` call is an attempt, so a component that keeps returning nothing still
+ends at the attempt limit. Cancellation and deadlines are checked between steps: a
+validation already in progress is not interrupted until the validator itself supports
+cancellation, and `timeout_seconds` does not yet bound a single validation. The
+orchestrator uses budgets only; selecting deterministic versus LLM candidates and
+escalating between them (`repair.strategy`, `max_deterministic_candidates`) belongs to
+the repair component behind `Repairer`.
+
+`fakes.py` provides `FakeValidator` and `FakeRepairer` with scripted results, so
+validation and repair code can be integrated before the real pieces exist. The fake
+validator, like the real one, requires a new evidence directory.
+
 Repository ingestion, localization ranking, repair generation, Docker execution,
 the API, and the dashboard are planned and are not implemented.
 
