@@ -53,8 +53,18 @@ Deterministic candidates report zero usage.
 
 Use `queued`, `running`, `verified`, `failed`, `error`, and `cancelled` consistently.
 The older design document omits `cancelled`; this scaffold includes it to match
-the planned cancellation API. Progress-event and persisted run-configuration
-contracts will be added with orchestration.
+the planned cancellation API. `ALLOWED_TRANSITIONS` defines the only legal moves:
+`queued` becomes `running` or `cancelled`, `running` becomes any terminal status
+(including `error` for work interrupted by a restart), and terminal statuses never
+change. Storage enforces this table.
+
+`ProgressEvent` is the payload shared by the CLI, API stream, and dashboard: a
+kind, optional attempt number, message, and flat JSON-safe `data`. `StoredEvent`
+adds the run ID, a per-run `sequence` starting at 1, and a timestamp.
+`RepairUsage.requests` counts billable provider requests so the request budget can
+include format retries and localization calls. `Attempt.method` is `None` when a
+repair component returned no candidate. Persisted run-configuration contracts are
+covered in the configuration document.
 
 ## Planning references
 

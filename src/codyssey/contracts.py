@@ -1,5 +1,6 @@
 """Shared data contracts; execution and persistence are implemented separately."""
 
+from datetime import datetime
 from enum import StrEnum
 from typing import Literal
 
@@ -17,6 +18,21 @@ class RunStatus(StrEnum):
     FAILED = "failed"
     ERROR = "error"
     CANCELLED = "cancelled"
+
+
+TERMINAL_STATUSES = frozenset(
+    {RunStatus.VERIFIED, RunStatus.FAILED, RunStatus.ERROR, RunStatus.CANCELLED}
+)
+
+# `running -> error` also covers marking interrupted work after a worker restart.
+ALLOWED_TRANSITIONS: dict[RunStatus, frozenset[RunStatus]] = {
+    RunStatus.QUEUED: frozenset({RunStatus.RUNNING, RunStatus.CANCELLED}),
+    RunStatus.RUNNING: TERMINAL_STATUSES,
+    RunStatus.VERIFIED: frozenset(),
+    RunStatus.FAILED: frozenset(),
+    RunStatus.ERROR: frozenset(),
+    RunStatus.CANCELLED: frozenset(),
+}
 
 
 class Task(Contract):
@@ -73,6 +89,8 @@ class RepairUsage(Contract):
     input_tokens: int = Field(default=0, ge=0)
     output_tokens: int = Field(default=0, ge=0)
     latency_ms: int = Field(default=0, ge=0)
+    # Billable provider requests, including format retries and localization calls.
+    requests: int = Field(default=0, ge=0)
 
 
 class RepairOutcome(Contract):
@@ -118,7 +136,8 @@ class LLMResponse(Contract):
 class Attempt(Contract):
     run_id: str = Field(min_length=1)
     number: int = Field(ge=1)
-    method: Literal["deterministic", "llm"]
+    # None when the repair component returned no candidate to classify.
+    method: Literal["deterministic", "llm"] | None = None
     status: Literal["patch_invalid", "tests_failed", "tests_passed", "timeout", "error"]
     patch_path: str | None = None
     error_summary: str | None = None
@@ -128,3 +147,35 @@ class Run(Contract):
     id: str = Field(min_length=1)
     task_id: str = Field(min_length=1)
     status: RunStatus = RunStatus.QUEUED
+    status_reason: str | None = None
+    created_at: datetime | None = None
+    started_at: datetime | None = None
+    finished_at: datetime | None = None
+
+
+class EventKind(StrEnum):
+    RUN_QUEUED = "run_queued"
+    RUN_STARTED = "run_started"
+    BASELINE_REPRODUCED = "baseline_reproduced"
+    ATTEMPT_STARTED = "attempt_started"
+    ATTEMPT_FINISHED = "attempt_finished"
+    CANCEL_REQUESTED = "cancel_requested"
+    RUN_FINISHED = "run_finished"
+
+
+class ProgressEvent(Contract):
+    """Payload shared by the CLI, API stream, and dashboard; storage adds ordering."""
+
+    kind: EventKind
+    attempt: int | None = Field(default=None, ge=1)
+    message: str = ""
+    data: dict[str, str | int | float | bool | None] = Field(default_factory=dict)
+
+
+class StoredEvent(Contract):
+    """A persisted event; `sequence` is per run and starts at 1 (usable as an SSE id)."""
+
+    run_id: str = Field(min_length=1)
+    sequence: int = Field(ge=1)
+    created_at: datetime
+    event: ProgressEvent
