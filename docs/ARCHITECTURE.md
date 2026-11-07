@@ -22,8 +22,29 @@ next action. Token, request, and cost limits depend on provider-reported usage, 
 are best-effort: one request can overshoot before its usage is recorded. Estimated cost
 uses the configured price assumptions and is undefined when none are set.
 
+`storage/` persists state. `RunStore` is a SQLite database (standard-library `sqlite3`)
+holding tasks, runs, attempts, test results, and ordered progress events. Every write is
+one `BEGIN IMMEDIATE` transaction, so a worker, the CLI, and a future API process can
+share the file. Status changes go through `RunStore.transition`, which enforces the
+lifecycle table and stamps start/finish times. Cancellation is a persisted request:
+a queued run is cancelled at once, while a running run keeps going until its controller
+observes the request. `mark_interrupted_runs` ends leftover `running` runs as `error`
+after a restart. Each run saves its full configuration, including price assumptions.
+Baseline test results are stored as attempt 0. Per-attempt usage is stored with the
+attempt, so a repair outcome with no candidate is still charged. An attempt is written
+once its outcome is known, so a crash mid-attempt can lose that attempt's usage.
+
+`ArtifactStore` writes immutable files (`open("x")`; no overwrites) under
+`<root>/<run_id>/`: `config.json`, `attempt<N>/patch.diff`, and `final_patch.diff`
+(verified runs only). The sandbox validator needs a new directory for its evidence, so
+baseline evidence goes in `baseline/` and attempt evidence in `attempt<N>/evidence/`;
+neither is created by the store. The database keeps paths relative to the artifact root
+so exported records stay portable. Run IDs from `new_run_id()` are sortable and unique
+across machines. The data model deliberately omits the design document's `LLMCall` and
+`RepoIndex` tables until the provider and index code needing them exists.
+
 Repository ingestion, localization ranking, repair generation, Docker execution,
-persistence, the API, and the dashboard are planned and are not implemented.
+the API, and the dashboard are planned and are not implemented.
 
 ## Planned flow
 
